@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+//import com.arcrobotics.ftclib.hardware.motors.Encoder;
 
 @TeleOp(name="jeffery2nd")
 public class tutorialMecanum extends OpMode {
@@ -16,6 +18,17 @@ public class tutorialMecanum extends OpMode {
     private double speedMultiplier = 1.0;
     private boolean lastToggleState = false;
     private DcMotor outakeMotor = null;
+    private CRServo leftoutakeServo = null;
+    private CRServo rightoutakeServo = null;
+    private MotorEx leftEncoder;
+    private MotorEx rightEncoder;
+    private MotorEx centerEncoder;
+
+    //private OdometryTracker odometry = new OdometryTracker();
+
+
+
+
 
     public void initializeMotors() {
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -25,18 +38,21 @@ public class tutorialMecanum extends OpMode {
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
-        //outakeServo.setDirection(CRServo.Direction.REVERSE);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
     }
 
 
     public void initializeServos() {
 
         outakeMotor = hardwareMap.get(DcMotor.class, "outakeMotor");
+        leftoutakeServo = hardwareMap.get(CRServo.class, "leftoutakeMotor");
+        rightoutakeServo = hardwareMap.get(CRServo.class, "rightoutakeMotor");
 
     }
 
@@ -47,8 +63,29 @@ public class tutorialMecanum extends OpMode {
         initializeMotors();
         initializeServos();
 
-    }
+        leftEncoder = new MotorEx(hardwareMap, "leftEncoder");
+        rightEncoder = new MotorEx(hardwareMap, "rightEncoder");
+        centerEncoder = new MotorEx(hardwareMap, "centerEncoder");
 
+        leftEncoder.setRunMode(Motor.RunMode.RawPower);
+        rightEncoder.setRunMode(Motor.RunMode.RawPower);
+        centerEncoder.setRunMode(Motor.RunMode.RawPower);
+
+//        leftEncoder.setRunMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
+//        leftEncoder.setRunMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
+//        rightEncoder.setRunMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightEncoder.setRunMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
+//        centerEncoder.setRunMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
+//        centerEncoder.setRunMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //leftEncoder = new Encoder(hardwareMap, "leftEncoder");
+        //rightEncoder = new Encoder(hardwareMap, "rightEncoder");
+        //centerEncoder = new Encoder(hardwareMap, "centerEncoder");
+
+
+
+
+    }
 
 
 
@@ -56,16 +93,43 @@ public class tutorialMecanum extends OpMode {
     public void loop() {
         boolean currentToggleState = gamepad1.a;
 
+        // Speed toggle logic
         if (currentToggleState && !lastToggleState) {
-            speedMultiplier = (speedMultiplier == 1.0) ? 0.4: 1.0;
+            speedMultiplier = (speedMultiplier == 1.0) ? 0.4 : 1.0;
         }
         lastToggleState = currentToggleState;
 
-        mecanumDrive();
 
+        mecanumDrive();
         double servoPower = gamepad2.right_stick_y;
         outakeMotor.setPower(servoPower);
+        leftoutakeServo.setPower(servoPower);
+        rightoutakeServo.setPower(servoPower);
 
+
+        telemetry.addData("Speed Mode", speedMultiplier == 1.0 ? "Fast" : "Precision");
+        telemetry.addData("Outake Power", servoPower);
+        telemetry.addData("Front Left Power", frontLeft.getPower());
+        telemetry.addData("Front Right Power", frontRight.getPower());
+        telemetry.addData("Back Left Power", backLeft.getPower());
+        telemetry.addData("Back Right Power", backRight.getPower());
+        telemetry.addData("left Odometer Velocity", leftEncoder.getVelocity());
+        telemetry.addData("right Odometer Velocity", rightEncoder.getVelocity());
+        telemetry.addData("Left Encoder", leftEncoder.getCurrentPosition());
+        telemetry.addData("Right Encoder", rightEncoder.getCurrentPosition());
+        telemetry.addData("Center Encoder", centerEncoder.getCurrentPosition());
+        //telemetry.addData("X (mm)", pose.getX());
+        //telemetry.addData("Y (mm)", pose.getY());
+        //telemetry.addData("Heading (deg)", Math.toDegrees(pose.getHEading()));
+        telemetry.update();
+
+        //odometry.update(
+        //        leftEncoder.getCurrentPosition(),
+        //        rightEncoder.getCurrentPosition(),
+        //        centerEncoder.getCurrentPosition()
+        //);
+
+        //Pose2d pose = odometry.getPose();
     }
     public void buttonTester () {
         if (gamepad1.a) {
@@ -90,15 +154,15 @@ public class tutorialMecanum extends OpMode {
         double backLeftPower = axial - lateral + yaw;
         double backRightPower = axial + lateral - yaw;
 
-        // double max = Math.max(Math.abs(frontLeftPower),
-        //              Math.max(Math.abs(frontRightPower),
-        //              Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
-        // if (max > 1.0) {
-        //     frontLeftPower /= max;
-        //     frontRightPower /= max;
-        //     backLeftPower /= max;
-        //     backRightPower /= max;
-        // }
+        double max = Math.max(Math.abs(frontLeftPower),
+                Math.max(Math.abs(frontRightPower),
+                        Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
+        if (max > 1.0) {
+            frontLeftPower /= max;
+            frontRightPower /= max;
+            backLeftPower /= max;
+            backRightPower /= max;
+        }
 
 
         frontLeft.setPower(frontLeftPower * speedMultiplier);
