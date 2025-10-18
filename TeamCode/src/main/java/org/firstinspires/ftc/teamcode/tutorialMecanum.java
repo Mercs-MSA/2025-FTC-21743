@@ -20,9 +20,9 @@ public class tutorialMecanum extends OpMode {
     private DcMotor outakeMotor = null;
     private CRServo leftoutakeServo = null;
     private CRServo rightoutakeServo = null;
-    private MotorEx leftEncoder;
-    private MotorEx rightEncoder;
-    private MotorEx centerEncoder;
+    //private MotorEx leftEncoder;
+    //private MotorEx rightEncoder;
+    //private MotorEx centerEncoder;
 
     //private OdometryTracker odometry = new OdometryTracker();
 
@@ -30,7 +30,7 @@ public class tutorialMecanum extends OpMode {
 
 
 
-    public void initializeMotors() {
+    public void initializeDriveMotors() {
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
@@ -48,7 +48,7 @@ public class tutorialMecanum extends OpMode {
     }
 
 
-    public void initializeServos() {
+    public void initializeShooter() {
 
         outakeMotor = hardwareMap.get(DcMotor.class, "outakeMotor");
         leftoutakeServo = hardwareMap.get(CRServo.class, "leftoutakeMotor");
@@ -60,16 +60,16 @@ public class tutorialMecanum extends OpMode {
 
     @Override
     public void init() {
-        initializeMotors();
-        initializeServos();
+        initializeDriveMotors();
+        initializeShooter();
 
-        leftEncoder = new MotorEx(hardwareMap, "leftEncoder");
-        rightEncoder = new MotorEx(hardwareMap, "rightEncoder");
-        centerEncoder = new MotorEx(hardwareMap, "centerEncoder");
+        //leftEncoder = new MotorEx(hardwareMap, "leftEncoder");
+        //rightEncoder = new MotorEx(hardwareMap, "rightEncoder");
+        //centerEncoder = new MotorEx(hardwareMap, "centerEncoder");
 
-        leftEncoder.setRunMode(Motor.RunMode.RawPower);
-        rightEncoder.setRunMode(Motor.RunMode.RawPower);
-        centerEncoder.setRunMode(Motor.RunMode.RawPower);
+        //leftEncoder.setRunMode(Motor.RunMode.RawPower);
+        //rightEncoder.setRunMode(Motor.RunMode.RawPower);
+        //centerEncoder.setRunMode(Motor.RunMode.RawPower);
 
 //        leftEncoder.setRunMode(Motor.RunMode.STOP_AND_RESET_ENCODER);
 //        leftEncoder.setRunMode(Motor.RunMode.RUN_WITHOUT_ENCODER);
@@ -113,11 +113,11 @@ public class tutorialMecanum extends OpMode {
         telemetry.addData("Front Right Power", frontRight.getPower());
         telemetry.addData("Back Left Power", backLeft.getPower());
         telemetry.addData("Back Right Power", backRight.getPower());
-        telemetry.addData("left Odometer Velocity", leftEncoder.getVelocity());
-        telemetry.addData("right Odometer Velocity", rightEncoder.getVelocity());
-        telemetry.addData("Left Encoder", leftEncoder.getCurrentPosition());
-        telemetry.addData("Right Encoder", rightEncoder.getCurrentPosition());
-        telemetry.addData("Center Encoder", centerEncoder.getCurrentPosition());
+        //telemetry.addData("left Odometer Velocity", leftEncoder.getVelocity());
+        //telemetry.addData("right Odometer Velocity", rightEncoder.getVelocity());
+        //telemetry.addData("Left Encoder", leftEncoder.getCurrentPosition());
+        //telemetry.addData("Right Encoder", rightEncoder.getCurrentPosition());
+        //telemetry.addData("Center Encoder", centerEncoder.getCurrentPosition());
         //telemetry.addData("X (mm)", pose.getX());
         //telemetry.addData("Y (mm)", pose.getY());
         //telemetry.addData("Heading (deg)", Math.toDegrees(pose.getHEading()));
