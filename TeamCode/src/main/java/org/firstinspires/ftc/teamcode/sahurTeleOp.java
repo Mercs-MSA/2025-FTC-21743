@@ -145,7 +145,6 @@ public class sahurTeleOp extends OpMode {
             speedMultiplier = (speedMultiplier == 1.0) ? 0.4 : 1.0;
         }
         lastToggleState = currentToggleState;
-
         telemetry.addLine("Push your robot around to see it track");
         telemetry.addLine("Press A to reset the position");
         if(gamepad1.b){
