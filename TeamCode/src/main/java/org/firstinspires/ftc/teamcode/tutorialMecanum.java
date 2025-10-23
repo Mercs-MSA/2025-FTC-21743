@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 //import com.arcrobotics.ftclib.hardware.motors.Encoder;
 
 @TeleOp(name="jeffery2nd")
@@ -26,6 +23,7 @@ public class tutorialMecanum extends OpMode {
 
     //private OdometryTracker odometry = new OdometryTracker();
 
+    private DcMotor intakeMotor = null;
 
 
 
@@ -53,6 +51,8 @@ public class tutorialMecanum extends OpMode {
         outakeMotor = hardwareMap.get(DcMotor.class, "outakeMotor");
         leftoutakeServo = hardwareMap.get(CRServo.class, "leftoutakeMotor");
         rightoutakeServo = hardwareMap.get(CRServo.class, "rightoutakeMotor");
+
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
     }
 
@@ -91,22 +91,24 @@ public class tutorialMecanum extends OpMode {
 
     @Override
     public void loop() {
-        boolean currentToggleState = gamepad1.a;
+        boolean precisionMode = gamepad1.a;
 
         // Speed toggle logic
-        if (currentToggleState && !lastToggleState) {
+        if (precisionMode && !lastToggleState) {
             speedMultiplier = (speedMultiplier == 1.0) ? 0.4 : 1.0;
         }
-        lastToggleState = currentToggleState;
+        lastToggleState = precisionMode;
 
 
         mecanumDrive();
         double servoPower = gamepad2.right_stick_y;
+        boolean intakeSpeed = gamepad2.left_bumper;
+
         outakeMotor.setPower(servoPower);
         leftoutakeServo.setPower(servoPower);
         rightoutakeServo.setPower(servoPower);
-
-
+        intakeMotor.setPower(intakeSpeed ? 1.0 : 0.0);
+        
         telemetry.addData("Speed Mode", speedMultiplier == 1.0 ? "Fast" : "Precision");
         telemetry.addData("Outake Power", servoPower);
         telemetry.addData("Front Left Power", frontLeft.getPower());
