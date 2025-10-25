@@ -133,6 +133,7 @@ public class tutorialMecanum extends OpMode {
             intakeMotor.setPower(0.0);
         }
 
+
         boolean currentToggle = gamepad2.right_bumper;
 
         if (currentToggle && !lastIntakeToggle) {
