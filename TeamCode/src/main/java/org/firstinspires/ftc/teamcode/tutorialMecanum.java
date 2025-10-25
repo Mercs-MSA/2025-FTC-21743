@@ -119,7 +119,7 @@ public class tutorialMecanum extends OpMode {
         outakeMotor.setPower(outakePower);
 
 
-        if gamepad2.left_bumper {
+        if (gamepad2.left_bumper) {
             intakeMotor.setPower(1.0);
         } else if (gamepad2.right_bumper) {
             intakeMotor.setPower(-1.0);
@@ -127,17 +127,10 @@ public class tutorialMecanum extends OpMode {
             intakeMotor.setPower(0.0);
         }
 
-        if (intakeForward) {
-            intakeMotor.setPower(intakeReverse ? -1.0 : 1.0);
-        }else {
-            intakeMotor.setPower(0.0);
-        }
-
-
         boolean currentToggle = gamepad2.right_bumper;
 
         if (currentToggle && !lastIntakeToggle) {
-            inatkeReverse = !intakeReverse;
+            intakeReverse = !intakeReverse;
         }
         lastIntakeToggle = currentToggle;
         double servoPower = gamepad2.a ? 1.0 : 0.0;
