@@ -101,8 +101,30 @@ public class tutorialMecanum extends OpMode {
 
 
         mecanumDrive();
-        double servoPower = gamepad2.right_stick_y;
+
+
+        double outakePower = 0.0;
+
+        if (gamepad2.b) {
+            outakePower = 1.0;
+        } else if (gamepad2.a) {
+            outakePower = 0.9;
+        } else if (gamepad2.x) {
+            outakePower = 0.8;
+        }
+        // try different combinations:eg. 100, 90, 80; 100, 80, 60; 100 90, 70; etc.
+
+        outakeMotor.setPower(outakePower);
+
+
         boolean intakeSpeed = gamepad2.left_bumper;
+        double servoPower = gamepad2.a ? 1.0 : 0.0;
+        outakeMotor.setPower(servoPower);
+        if (gamepad2.a) {
+            outakeMotor.setPower(1.0);
+        } else {
+            outakeMotor.setPower(0);
+        }
 
         outakeMotor.setPower(servoPower);
         leftoutakeServo.setPower(servoPower);
@@ -115,6 +137,11 @@ public class tutorialMecanum extends OpMode {
         telemetry.addData("Front Right Power", frontRight.getPower());
         telemetry.addData("Back Left Power", backLeft.getPower());
         telemetry.addData("Back Right Power", backRight.getPower());
+        telemetry.addData("Outake Motor Status", gamepad2.a ? "Running at 100%" : "Off");
+        telemetry.addData("Outake Mode",
+                gamepad2.a ? "Fast" :
+                gamepad2.x ? "Medium" :
+                gamepad2.b ? "Precision" : "Off");
         //telemetry.addData("left Odometer Velocity", leftEncoder.getVelocity());
         //telemetry.addData("right Odometer Velocity", rightEncoder.getVelocity());
         //telemetry.addData("Left Encoder", leftEncoder.getCurrentPosition());
