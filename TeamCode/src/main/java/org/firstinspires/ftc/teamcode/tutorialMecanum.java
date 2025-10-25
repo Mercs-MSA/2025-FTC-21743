@@ -17,6 +17,8 @@ public class tutorialMecanum extends OpMode {
     private DcMotor outakeMotor = null;
     private CRServo leftoutakeServo = null;
     private CRServo rightoutakeServo = null;
+    private boolean intakeReverse = false;
+    private boolean lastIntakeToggle = false;
     //private MotorEx leftEncoder;
     //private MotorEx rightEncoder;
     //private MotorEx centerEncoder;
@@ -117,7 +119,26 @@ public class tutorialMecanum extends OpMode {
         outakeMotor.setPower(outakePower);
 
 
-        boolean intakeSpeed = gamepad2.left_bumper;
+        if gamepad2.left_bumper {
+            intakeMotor.setPower(1.0);
+        } else if (gamepad2.right_bumper) {
+            intakeMotor.setPower(-1.0);
+        } else {
+            intakeMotor.setPower(0.0);
+        }
+
+        if (intakeForward) {
+            intakeMotor.setPower(intakeReverse ? -1.0 : 1.0);
+        }else {
+            intakeMotor.setPower(0.0);
+        }
+
+        boolean currentToggle = gamepad2.right_bumper;
+
+        if (currentToggle && !lastIntakeToggle) {
+            inatkeReverse = !intakeReverse;
+        }
+        lastIntakeToggle = currentToggle;
         double servoPower = gamepad2.a ? 1.0 : 0.0;
         outakeMotor.setPower(servoPower);
         if (gamepad2.a) {
@@ -129,7 +150,7 @@ public class tutorialMecanum extends OpMode {
         outakeMotor.setPower(servoPower);
         leftoutakeServo.setPower(servoPower);
         rightoutakeServo.setPower(servoPower);
-        intakeMotor.setPower(intakeSpeed ? 1.0 : 0.0);
+
         
         telemetry.addData("Speed Mode", speedMultiplier == 1.0 ? "Fast" : "Precision");
         telemetry.addData("Outake Power", servoPower);
