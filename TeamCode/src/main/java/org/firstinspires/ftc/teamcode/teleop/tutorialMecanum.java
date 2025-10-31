@@ -50,7 +50,8 @@ public class tutorialMecanum extends OpMode {
 
     public void initializeShooter() {
 
-        outakeMotor = hardwareMap.get(DcMotor.class, "outakeMotor");
+        leftoutakeMotor = hardwareMap.get(DcMotor.class, "leftoutakeMotor");
+        rightoutakeMotor = hardwareMap.get(DcMotor.class, "rightoutakeMotor");
         leftoutakeServo = hardwareMap.get(CRServo.class, "leftoutakeMotor");
         rightoutakeServo = hardwareMap.get(CRServo.class, "rightoutakeMotor");
 
@@ -108,15 +109,16 @@ public class tutorialMecanum extends OpMode {
         double outakePower = 0.0;
 
         if (gamepad2.b) {
-            outakePower = 0.9;
+            leftoutakePower = 1.0;
         } else if (gamepad2.a) {
-            outakePower = 0.8;
+            leftoutakePower = 0.95;
         } else if (gamepad2.x) {
-            outakePower = 0.7;
+            leftoutakePower = 0.9;
         }
         // try different combinations:eg. 100, 90, 80; 100, 80, 60; 100 90, 70; etc.
 
-        outakeMotor.setPower(outakePower);
+        leftoutakeMotor.setPower(leftoutakePower);
+        rightoutakeMotor.setPower(rightoutakePower);
 
 
         if (gamepad2.left_bumper) {
@@ -134,7 +136,8 @@ public class tutorialMecanum extends OpMode {
         }
         lastIntakeToggle = currentToggle;
         double servoPower = gamepad2.a ? 1.0 : 0.0;
-        outakeMotor.setPower(servoPower);
+        leftoutakeMotor.setPower(servoPower);
+        rightoutakeMotor.setPower(servoPower);
         if (gamepad2.a) {
             outakeMotor.setPower(1.0);
         } else {
