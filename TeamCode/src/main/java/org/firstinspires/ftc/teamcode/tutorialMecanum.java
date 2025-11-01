@@ -4,6 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+
+import org.firstinspires.ftc.robotcore.internal.usb.EthernetOverUsbSerialNumber;
 //import com.arcrobotics.ftclib.hardware.motors.Encoder;
 
 @TeleOp(name="jeffery2nd")
@@ -27,6 +31,9 @@ public class tutorialMecanum extends OpMode {
     //private OdometryTracker odometry = new OdometryTracker();
 
     private DcMotor intakeMotor = null;
+    private Servo gateServo = null;
+    private Servo leftAimServo = null;
+    private Servo rightAimServo = null;
 
 
 
@@ -58,9 +65,16 @@ public class tutorialMecanum extends OpMode {
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
+        gateServo = hardwareMap.get(Servo.class, "gateServo");
+        //gateServo.setDirection(Servo.Direction.REVERSE);
+
+        leftAimServo = hardwareMap.get(Servo.class, "leftAimServo");
+        rightAimServo = hardwareMap.get(Servo.class, "rightAimServo");
+        leftAimServo.scaleRange(0.0,0.6);
+        rightAimServo.scaleRange(0.0,0.6);
+        rightAimServo.setDirection(Servo.Direction.REVERSE);
+
     }
-
-
 
     @Override
     public void init() {
@@ -93,18 +107,15 @@ public class tutorialMecanum extends OpMode {
     @Override
     public void loop() {
         boolean precisionMode = gamepad1.a;
+        double outakePower = 0.0;
+        boolean gateUp;
+        boolean currentToggle = gamepad2.right_bumper;
 
         // Speed toggle logic
         if (precisionMode && !lastToggleState) {
             speedMultiplier = (speedMultiplier == 1.0) ? 0.4 : 1.0;
         }
         lastToggleState = precisionMode;
-
-
-        mecanumDrive();
-
-
-        double outakePower = 0.0;
 
         if (gamepad2.b) {
             outakePower = 1.0;
@@ -113,11 +124,9 @@ public class tutorialMecanum extends OpMode {
         } else if (gamepad2.x) {
             outakePower = 0.9;
         }
-        // try different combinations:eg. 100, 90, 80; 100, 80, 60; 100 90, 70; etc.
 
         leftoutakeMotor.setPower(outakePower);
         rightoutakeMotor.setPower(outakePower);
-
 
         if (gamepad2.left_bumper) {
             intakeMotor.setPower(1.0);
@@ -127,23 +136,30 @@ public class tutorialMecanum extends OpMode {
             intakeMotor.setPower(0.0);
         }
 
-        boolean currentToggle = gamepad2.right_bumper;
-
         if (currentToggle && !lastIntakeToggle) {
             intakeReverse = !intakeReverse;
         }
         lastIntakeToggle = currentToggle;
-        double servoPower = gamepad2.a ? 1.0 : 0.0;
 
+        mecanumDrive();
 
+        gateUp = gamepad2.dpad_down;
+        if (gateUp) {
+            gateServo.setPosition(0.0);
+        } else
+        {
+            gateServo.setPosition(0.25);
+        }
+//        gateServo.setPosition(gateUp ? 0.5 : 0.0);
+//        //leftoutakeServo.setPower(servoPower);
+//        //rightoutakeServo.setPower(servoPower);
 
+        float aimPosition = gamepad2.left_trigger;
+        leftAimServo.setPosition(aimPosition);
+        rightAimServo.setPosition(aimPosition);
 
-        //leftoutakeServo.setPower(servoPower);
-        //rightoutakeServo.setPower(servoPower);
-
-        
         telemetry.addData("Speed Mode", speedMultiplier == 1.0 ? "Fast" : "Precision");
-        telemetry.addData("Outake Power", servoPower);
+        telemetry.addData("Outake Power", outakePower);
         telemetry.addData("Front Left Power", frontLeft.getPower());
         telemetry.addData("Front Right Power", frontRight.getPower());
         telemetry.addData("Back Left Power", backLeft.getPower());
@@ -151,6 +167,8 @@ public class tutorialMecanum extends OpMode {
         telemetry.addData("Left Outake Motor Power", leftoutakeMotor.getPower());
         telemetry.addData("Right Outake Motor Power", rightoutakeMotor.getPower());
         telemetry.addData("Intake Motor Power", intakeMotor.getPower());
+        telemetry.addData("Gate", gateUp ? "Up" : "Down");
+        telemetry.addData("Aim Position", aimPosition);
 
         //telemetry.addData("left Odometer Velocity", leftEncoder.getVelocity());
         //telemetry.addData("right Odometer Velocity", rightEncoder.getVelocity());

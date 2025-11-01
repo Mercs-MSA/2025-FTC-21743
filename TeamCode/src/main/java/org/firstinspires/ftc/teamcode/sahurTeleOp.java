@@ -4,6 +4,7 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -18,6 +19,7 @@ public class sahurTeleOp extends OpMode {
     private DcMotor backRight = null;
     private double speedMultiplier = 1.0;
     private boolean lastToggleState = false;
+    private Servo gateServo = null;
 //    private DcMotor outakeMotor = null;
 //    private CRServo leftoutakeServo = null;
 //    private CRServo rightoutakeServo = null;
@@ -95,6 +97,8 @@ public class sahurTeleOp extends OpMode {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        gateServo = hardwareMap.get(Servo.class, "gateServo");
+
 
     }
 
@@ -163,6 +167,13 @@ public class sahurTeleOp extends OpMode {
 //        leftoutakeServo.setPower(servoPower);
 //        rightoutakeServo.setPower(servoPower);
 
+
+        if (gamepad2.dpad_down) {
+            gateServo.setPosition(0.0);
+        } else
+        {
+            gateServo.setPosition(0.25);
+        }
 
         telemetry.addData("Speed Mode", speedMultiplier == 1.0 ? "Fast" : "Precision");
         telemetry.addData("Outake Power", servoPower);
