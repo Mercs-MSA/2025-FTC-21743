@@ -60,6 +60,8 @@ public class tutorialMecanum extends OpMode {
 
         leftoutakeMotor = hardwareMap.get(DcMotor.class, "leftoutakeMotor");
         rightoutakeMotor = hardwareMap.get(DcMotor.class, "rightoutakeMotor");
+        leftoutakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightoutakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         rightoutakeMotor.setDirection(DcMotor.Direction.REVERSE);
 
@@ -118,11 +120,15 @@ public class tutorialMecanum extends OpMode {
         lastToggleState = precisionMode;
 
         if (gamepad2.b) {
-            outakePower = 1.0;
+            outakePower = 0.8;
         } else if (gamepad2.a) {
-            outakePower = 0.95;
+            outakePower = 0.75;
         } else if (gamepad2.x) {
-            outakePower = 0.9;
+            outakePower = 0.7;
+        }
+
+        if (gamepad2.y) {
+            outakePower = (-0.1);
         }
 
         leftoutakeMotor.setPower(outakePower);
