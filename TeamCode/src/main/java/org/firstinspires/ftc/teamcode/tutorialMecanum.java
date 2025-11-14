@@ -128,7 +128,7 @@ public class tutorialMecanum extends OpMode {
         }
 
         if (gamepad2.y) {
-            outakePower = (-0.1);
+            outakePower = (-0.2);
         }
 
         leftoutakeMotor.setPower(outakePower);
