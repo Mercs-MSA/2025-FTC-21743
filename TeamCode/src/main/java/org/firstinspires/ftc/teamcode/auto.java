@@ -13,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 //import com.arcrobotics.ftclib.hardware.motors.Encoder;
 
-
 @Autonomous(name="Auto: Move Forward")
 public class auto extends OpMode {
     private DcMotor frontLeft = null;
@@ -64,7 +63,7 @@ public class auto extends OpMode {
     }
     @Override
     public void loop() {
-        while (ElapsedTime < 2.0) {
+        while (ElapsedTime < 5.0) { // changed 2 seconds to 5 seconds
             frontLeft.setPower(0.2);
             backLeft.setPower(0.2);
             frontRight.setPower(0.2);
